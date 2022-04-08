@@ -1,0 +1,99 @@
+		LDI	ACUM , 0	; Inicializa el acumulador de autos
+		LDI	NUM_A , 0	; Se inicializa el contador de autos
+
+BTN1:	SBIC PINB, 0	; Verifica si el botón esta apagado
+		RJMP BTN2       ; si el botón esta prendido salto a BTN2
+		LDI NUM_A , 1	; Guarda el total de autos en el contador
+		LDI ACUM , 0x01	; Actualiza el acumulador
+		OUT PINL , ACUM	; Envía el acumulador a los LEDs 
+		
+BTN2:	SBIC PINB, 1
+		RJMP BTN3		; Si el botón está apagado, no hace nada
+		CP 	ACUM , R16	; Compara el valor del acumulador con el del botón
+		BRGE BTN3		; Si el valor en el acumulador es mayor o igual, no hace nada
+		LDI	NUM_A , 2	; Guarda el total de autos en el contador
+		LDI	ACUM , 0x03	; Actualiza el acumulador
+		OUT PINL , ACUM	; Envía el acumulador a los LEDs
+		
+BTN3:	IN	R16 , PINB3	; Lee el puerto del botón 3
+		CP	R16 , 0		; Verifica si el botón está encendido
+		BREQ BTN4		; Si el botón está apagado, no hace nada
+		CP	ACUM , R16	; Compara el valor del acumulador con el del botón
+		BRGE BTN4		; Si el valor en el acumulador es mayor o igual, no hace nada
+		LDI	NUM_A , 3	; Guarda el total de autos en el contador
+		LDI	ACUM , 0x07	; Actualiza el acumulador
+		OUT PINL , ACUM	; Envía el acumulador a los LEDs
+		
+BTN4:	IN	R16 , PINB4	; Lee el puerto del botón 4
+		CP	R16 , 0		; Verifica si el botón está encendido
+		BREQ BTN5		; Si el botón está apagado, no hace nada
+		CP	ACUM , R16	; Compara el valor del acumulador con el del botón
+		BRGE BTN5		; Si el valor en el acumulador es mayor o igual, no hace nada
+		LDI	NUM_A , 4	; Guarda el total de autos en el contador
+		LDI	ACUM , 0x0F	; Actualiza el acumulador
+		OUT PINL , ACUM	; Envía el acumulador a los LEDs
+		
+BTN5:	IN	R16 , PINB5	; Lee el puerto del botón 5
+		CP	R16 , 0		; Verifica si el botón está encendido
+		BREQ BTN6		; Si el botón está apagado, no hace nada
+		CP	ACUM , R16	; Compara el valor del acumulador con el del botón
+		BRGE BTN6		; Si el valor en el acumulador es mayor o igual, no hace nada
+		LDI NUM_A , 5	; Guarda el total de autos en el contador
+		LDI ACUM , 0x1F	; Actualiza el acumulador
+		OUT PINL , ACUM	; Envía el acumulador a los LEDs
+		
+BTN6:	IN 	R16 , PINB6	; Lee el puerto del botón 6
+		CP 	R16 , 0		; Verifica si el botón está encendido
+		BREQ BTN7		; Si el botón está apagado, no hace nada
+		CP 	ACUM , R16	; Compara el valor del acumulador con el del botón
+		BRGE BTN7		; Si el valor en el acumulador es mayor o igual, no hace nada
+		LDI NUM_A , 6	; Guarda el total de autos en el contador
+		LDI ACUM , 0x3F	; Actualiza el acumulador
+		OUT PINL , ACUM	; Envía el acumulador a los LEDs
+		
+BTN7:	IN 	R16 , PINB7	; Lee el puerto del botón 7
+		CP 	R16 , 0		; Verifica si el botón está encendido
+		BREQ BTN8		; Si el botón está apagado, no hace nada
+		CP 	ACUM , R16	; Compara el valor del acumulador con el del botón
+		BRGE BTN8		; Si el valor en el acumulador es mayor o igual, no hace nada
+		LDI NUM_A , 7	; Guarda el total de autos en el contador
+		LDI ACUM , 0x7F	; Actualiza el acumulador
+		OUT PINL , ACUM	; Envía el acumulador a los LEDs
+		
+BTN8:	IN 	R16 , PINB8	; Lee el puerto del botón 8
+		CP 	R16 , 0		; Verifica si el botón está encendido
+		BREQ CONT		; Si el botón está apagado, no hace nada
+		CP 	ACUM , R16	; Compara el valor del acumulador con el del botón
+		BRGE CONT		; Si el valor en el acumulador es mayor o igual, no hace nada
+		LDI NUM_A , 8	; Guarda el total de autos en el contador
+		LDI ACUM , 0xFF	; Actualiza el acumulador
+		OUT PINL , ACUM	; Envía el acumulador a los LEDs
+
+
+		OUT	PIND, NUM_A	; Se envía al chip del display de 7 segmentos el número de autos
+		
+		LDI VER_1 , 1	; Inicializa el LED Verde del semáforo 1
+		LDI VER_2 , 0	; Inicializa el LED Verde del semáforo 2
+		
+		LDI AMA_1 , 0	; Inicializa el LED Amarillo del semáforo 1
+		LDI AMA_2 , 0	; Inicializa el LED Amarillo del semáforo 2
+		
+		LDI ROJ_1 , 0	; Inicializa el LED Rojo del semáforo 1
+		LDI ROJ_2 , 1	; Inicializa el LED Rojo del semáforo 2
+
+DELAY:	LDI R20 , 0xF2	;
+		OUT TCNT0 , R20	;
+		LDI R20 , 0x01	;
+		OUT TCCR0 , 0x01;
+AGAIN:	IN 	R20 , TIFR	;
+		SBRS R20 , 03	;
+		RJMP AGAIN		;
+		LDI R20 , 0x0	;
+		OUT TCCR0 , R20	;
+		LDI R20 , 0x01	;
+		OUT TIFR , R20	;
+		RET				;
+		
+
+SEM_1:
+SEM_2: 
