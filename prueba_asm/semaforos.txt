@@ -1,0 +1,105 @@
+LDI R20, 0x00
+OUT DDRA, R20 ; PORTA = SEM_P
+OUT DDRB, R21 ; PORTB = SEM_NP
+INICIAL:    SBI PORTA, 0
+            CBI PORTA, 1
+            CBI PORTA, 2
+            CBI PORTB, 0
+            CBI PORTB, 1
+            SBI PORTB, 2
+ESTADO1:    LDI R16, 0xB7 
+            LDI R17, 0x1B
+            OUT OCR1H, R16
+            OUT OCR1L, R17
+            RCALL RETARDO
+            CPI NUM_A, 0x00
+            BRNE C2
+            RJMP ESTADO1
+C2:         CPI NUM_A, 0x01
+            BRNE C3
+            RJMP ESTADO2
+C3:         CPI NUM_A, 0x02
+            BRNE C4
+            RJMP ESTADO3
+C4:         CPI NUM_A, 0x03
+            BRNE C5
+            RJMP ESTADO4
+C5:         CPI NUM_A, 0x04
+            BRNE C6
+            RJMP ESTADO5
+C6:         CPI NUM_A, 0x05
+            BRSH ESTADO6
+
+ESTADO2:    LDI R16, 0x24 
+            LDI R17, 0x9F
+            LDI R18, 0x09 
+            LDI R19, 0x27
+            RJMP RUTINA
+ESTADO3:    LDI R16, 0x49 
+            LDI R17, 0x3E
+            LDI R18, 0x12 
+            LDI R19, 0x4F
+            RJMP RUTINA
+ESTADO4:    LDI R16, 0x6D
+            LDI R17, 0xDD
+            LDI R18, 0x1B 
+            LDI R19, 0x77
+            RJMP RUTINA
+ESTADO5:    LDI R16, 0x92
+            LDI R17, 0x7C
+            LDI R18, 0x24 
+            LDI R19, 0x9F
+            RJMP RUTINA
+ESTADO6:    LDI R16, 0xB7
+            LDI R17, 0x1B
+            LDI R18, 0x2D 
+            LDI R19, 0xC6
+            RJMP RUTINA
+
+RUTINA:     CBI PORTA, 0
+            SBI PORTA, 1
+            CBI PORTA, 2
+            CBI PORTB, 0
+            CBI PORTB, 1
+            SBI PORTB, 2
+            LDI R20, 0x2D
+            LDI R21. 0xC6
+            OUT OCR1H, R20
+            OUT OCR1L, R21
+            RCALL RETARDO
+            CBI PORTA, 0
+            CBI PORTA, 1
+            SBI PORTA, 2
+            SBI PORTB, 0
+            CBI PORTB, 1
+            CBI PORTB, 2
+            OUT OCR1H, R16
+            OUT OCR1L, R17
+            RCALL RETARDO
+            CBI PORTA, 0
+            CBI PORTA, 1
+            SBI PORTA, 2
+            CBI PORTB, 0
+            SBI PORTB, 1
+            CBI PORTB, 2
+            OUT OCR1H, R18
+            OUT OCR1L, R19
+            RCALL RETARDO
+            RJMP INICIAL
+
+
+RETARDO:    LDI R20, 0x00
+            OUT TCNT1H, R20
+            OUT TCNT1L, R20
+            LDI R24, 0x00
+            LDI R25, 0b00001101
+            OUT TCCR1A, R24
+            OUT TCCR1B, R25
+AGAIN:      IN R26, TIFR
+            SBRS R26, 1
+            RJMP AGAIN
+            OUT TCCR1A, R20
+            OUT TCCR1B, R20
+            LDI R20, 0x02
+            OUT TIFR, R20
+            RET
